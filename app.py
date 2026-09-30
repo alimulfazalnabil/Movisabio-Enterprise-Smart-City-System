@@ -10,9 +10,16 @@ st.markdown("### Corridor: CORRIDOR-001 (Main St Arterial)")
 
 mode = st.sidebar.radio("Mode", ["Live Camera", "Recorded Video", "SUMO Simulation (RL)", "Corridor Coordination"])
 
+st.sidebar.markdown("---")
+st.sidebar.markdown("### EDGE AI HEALTH (CAM-001)")
+st.sidebar.markdown("Status: **ONLINE**")
+st.sidebar.markdown("Camera FPS: **24.0**")
+st.sidebar.markdown("Inference Latency: **31.4 ms**")
+st.sidebar.markdown("Detection Confidence: **94%**")
+
 if mode == "Corridor Coordination":
     st.sidebar.markdown("---")
-    st.sidebar.markdown("### AI STATUS")
+    st.sidebar.markdown("### CLOUD AI STATUS")
     st.sidebar.markdown("Prediction: **ONLINE**")
     st.sidebar.markdown("Optimizer: **Multi-Agent PPO**")
     st.sidebar.markdown("Safety Engine: **ACTIVE**")
