@@ -1,0 +1,21 @@
+city:
+  id: "campinas"
+  country: "BR"
+  subscription_tier: "ENTERPRISE"
+  modules:
+    - traffic_control
+    - digital_twin
+    - transit_priority
+
+intersections:
+  - id: "INT-001"
+    latitude: -22.9056
+    longitude: -47.0608
+    lanes:
+      - id: "N1"
+        direction: "north"
+        movement: "through"
+    controller:
+      type: "municipal_adapter"
+      ip: "10.0.1.55"
+      port: 502

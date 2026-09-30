@@ -8,11 +8,12 @@ class RuleBasedOptimizer:
     def __init__(self):
         self.version = "rule-based-v1"
         
-    def evaluate(self, traffic_state: Dict[str, Any], current_signal_state: Dict[str, Any]) -> Dict[str, Any]:
+    def evaluate(self, traffic_state: Dict[str, Any], current_signal_state: Dict[str, Any], forecast: Dict[str, Any] = None) -> Dict[str, Any]:
         """
         Example Logic:
         If E/W queue > N/S queue + 5, request Phase 2 (E/W Green).
         Else if N/S queue > E/W queue + 5, request Phase 1 (N/S Green).
+        If forecast shows E/W demand surging in 5 mins, prioritize Phase 2.
         Otherwise, maintain current phase.
         """
         lanes = traffic_state.get("lanes", {})
@@ -26,6 +27,17 @@ class RuleBasedOptimizer:
         requested_phase = current_phase
         reason = "MAINTAIN_BALANCE"
         action = "MAINTAIN"
+        
+        # Factor in forecast if available
+        if forecast:
+            predicted_vol = forecast.get("t_plus_5", {}).get("vehicle_count", 0)
+            if predicted_vol > 50 and current_phase == "PHASE_1": # Just a mock logic to use forecast
+                return {
+                    "requested_action": "SWITCH_PHASE",
+                    "requested_phase": "PHASE_2",
+                    "reason": "ANTICIPATE_SURGE",
+                    "optimizer": self.version + "-predictive"
+                }
         
         if ew_queue > ns_queue + 5 and current_phase == "PHASE_1":
             requested_phase = "PHASE_2"

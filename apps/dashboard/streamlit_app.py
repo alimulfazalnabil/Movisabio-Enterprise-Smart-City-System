@@ -15,6 +15,7 @@ mode = st.sidebar.radio("Platform Module", [
     "Enterprise Command Center",
     "MLOps & Security",
     "Shadow Pilot (Field Validation)",
+        "SaaS Tenant Management (Multi-City)",
     "Controlled Field Pilot (LIVE)"
 ])
 
@@ -119,7 +120,8 @@ elif mode == "Shadow Pilot (Field Validation)":
         st.metric("Throughput (Shadow vs Baseline)", "1350 vph", delta="+150 vph", delta_color="normal")
         st.progress(0.998, text="Safety Pass Rate (99.8%)")
 
-elif mode == "Controlled Field Pilot (LIVE)":
+elif mode ==     "SaaS Tenant Management (Multi-City)",
+    "Controlled Field Pilot (LIVE)":
     st.sidebar.markdown("---")
     st.sidebar.markdown("### ⚠️ CRITICAL CONTROL")
     st.sidebar.markdown("Intersection: **INT-001**")
