@@ -149,16 +149,50 @@ elif mode == "Controlled Field Pilot (LIVE)":
 
 elif mode == "Corridor Coordination":
     st.sidebar.markdown("---")
-    st.sidebar.markdown("### CLOUD AI STATUS")
-    st.sidebar.markdown("Prediction: **ONLINE**")
-    st.sidebar.markdown("Optimizer: **Multi-Agent PPO**")
-    st.sidebar.markdown("Safety Engine: **ACTIVE**")
+    st.sidebar.markdown("### NETWORK STATUS")
+    st.sidebar.markdown("Topology: **4 Intersections**")
+    st.sidebar.markdown("Sync: **GREEN WAVE ACTIVE**")
     
-    st.subheader("Network Topology")
-    st.markdown("""
-    `INT-001` ─── `INT-002` ─── `INT-003` ─── `INT-004`
-    🟢 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 🟢 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 🔴 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 🟢
-    """)
+    st.subheader("MoviSabio Traffic Operations Center")
+    st.markdown("---")
+    
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.info("🟢 INT-001")
+        st.text("Flow: 1400 vph")
+        st.text("Queue: 12")
+        st.text("Offset: 0s (Master)")
+    with col2:
+        st.info("🟢 INT-002")
+        st.text("Flow: 1350 vph")
+        st.text("Queue: 8")
+        st.text("Offset: +30s")
+    with col3:
+        st.warning("🟡 INT-003")
+        st.text("Flow: 1520 vph")
+        st.text("Queue: 48 (Spillback Risk)")
+        st.text("Offset: +71s")
+    with col4:
+        st.error("🔴 INT-004")
+        st.text("Flow: 900 vph")
+        st.text("Queue: 5")
+        st.text("Offset: +102s")
+        
+    st.markdown("---")
+    st.subheader("Corridor KPIs")
+    kpi1, kpi2, kpi3, kpi4 = st.columns(4)
+    kpi1.metric("Network Delay", "24.2 s", "-4.1 s")
+    kpi2.metric("Corridor Travel Time", "4m 12s", "-45 s")
+    kpi3.metric("Throughput", "8,942 vph", "+8.2%")
+    kpi4.metric("CO2 Estimate", "2.1 MT", "-0.4 MT")
+    
+    st.markdown("---")
+    st.subheader("Transit & Emergency Priority")
+    st.code('''[2026-09-30 18:25:01] [Priority] AMBULANCE DETECTED near INT-002. Approaching INT-003.
+[2026-09-30 18:25:02] [Safety] AI requested preemptive Green for INT-003. PASSED.
+[2026-09-30 18:25:03] [Control] INT-003 preempted to N/S Green.
+[2026-09-30 18:25:40] [Control] Ambulance cleared. Re-syncing green wave offsets.
+''', language="log")
 
 # --- Mock Live Data ---
 if 'time' not in st.session_state:
