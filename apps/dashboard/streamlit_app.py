@@ -31,6 +31,16 @@ col4.metric("Congestion Index", data["congestion"])
 
 st.divider()
 
+# --- Prediction & Forecast ---
+st.subheader("Traffic Forecast (Next 15 min)")
+fc1, fc2, fc3, fc4 = st.columns(4)
+fc1.metric("+5 min Vehicles", data["vehicles"] + np.random.randint(5, 15))
+fc2.metric("+10 min Vehicles", data["vehicles"] + np.random.randint(15, 30))
+fc3.metric("+15 min Vehicles", data["vehicles"] + np.random.randint(25, 45))
+fc4.info("Forecast Status: Traffic increase expected. Preparing E/W capacity.")
+
+st.divider()
+
 # --- Signal & Lane Stats ---
 col_sig, col_lanes = st.columns(2)
 

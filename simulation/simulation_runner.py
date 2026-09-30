@@ -5,6 +5,7 @@ from simulation.traci_client import TraCIClient
 from simulation.metrics import KPIMetricsEngine
 from services.traffic_controller.sumo_controller import SumoController
 from services.optimization.rule_based_optimizer import RuleBasedOptimizer
+from services.prediction.predictor import TrafficPredictor
 from scripts.run_sprint_1 import MockTrafficStateEngine
 
 def run_simulation(scenario_name: str, use_movisabio: bool):
@@ -16,6 +17,7 @@ def run_simulation(scenario_name: str, use_movisabio: bool):
     
     controller = SumoController("configs/int_001.json", traci_client=traci)
     optimizer = RuleBasedOptimizer()
+    predictor = TrafficPredictor(active_model="gru")
     state_engine = MockTrafficStateEngine()
     metrics = KPIMetricsEngine()
     
@@ -27,10 +29,14 @@ def run_simulation(scenario_name: str, use_movisabio: bool):
         # 2. MoviSabio Perception (Traffic State)
         traffic_state = state_engine.update("INT-001", raw_detections)
         
-        # 3. AI Optimizer & Safety (only if using MoviSabio, else let SUMO do fixed time)
+        # 3. Predict Future Traffic
+        forecast = predictor.update_and_predict(traffic_state)
+        
+        # 4. AI Optimizer & Safety (only if using MoviSabio)
         if use_movisabio:
             current_signal = controller.get_state()
-            decision = optimizer.evaluate(traffic_state, current_signal)
+            # Optimizer now considers forecast as well
+            decision = optimizer.evaluate(traffic_state, current_signal, forecast=forecast)
             
             if decision['requested_action'] != "MAINTAIN":
                 controller.request_action(
