@@ -14,7 +14,8 @@ mode = st.sidebar.radio("Platform Module", [
     "Digital Twin & What-If",
     "Enterprise Command Center",
     "MLOps & Security",
-    "Shadow Pilot (Field Validation)"
+    "Shadow Pilot (Field Validation)",
+    "Controlled Field Pilot (LIVE)"
 ])
 
 st.sidebar.markdown("---")
@@ -117,6 +118,34 @@ elif mode == "Shadow Pilot (Field Validation)":
         st.metric("Avg Delay (Shadow vs Baseline)", "38.2 s", delta="-6.8 s (15.1%)", delta_color="inverse")
         st.metric("Throughput (Shadow vs Baseline)", "1350 vph", delta="+150 vph", delta_color="normal")
         st.progress(0.998, text="Safety Pass Rate (99.8%)")
+
+elif mode == "Controlled Field Pilot (LIVE)":
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### ⚠️ CRITICAL CONTROL")
+    st.sidebar.markdown("Intersection: **INT-001**")
+    st.sidebar.markdown("Control Mode: **AI + HIL SUPERVISION**")
+    st.sidebar.markdown("Fallback Sys: **READY**")
+    
+    st.error("🚨 LIVE TRAFFIC CONTROL IS ACTIVE 🚨")
+    
+    st.subheader("Physical Intersection Actuation")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.info("🟢 Current Phase: **N/S Green**")
+        st.text("Elapsed Time: 14 seconds")
+        st.text("Min Green: MET ✅")
+        st.text("Max Green: REMAINING (106s)")
+    with col2:
+        st.warning("🤖 Pending AI Command")
+        st.text("Action: NEXT_PHASE")
+        st.text("Confidence: 96%")
+        
+    st.markdown("---")
+    st.markdown("### Operator Controls")
+    c1, c2, c3 = st.columns(3)
+    c1.button("✅ APPROVE COMMAND", use_container_width=True)
+    c2.button("🚫 REJECT COMMAND", use_container_width=True)
+    c3.button("🛑 TRIGGER FALLBACK (DISCONNECT AI)", type="primary", use_container_width=True)
 
 elif mode == "Corridor Coordination":
     st.sidebar.markdown("---")
