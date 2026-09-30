@@ -13,7 +13,8 @@ mode = st.sidebar.radio("Platform Module", [
     "Corridor Coordination",
     "Digital Twin & What-If",
     "Enterprise Command Center",
-    "MLOps & Security"
+    "MLOps & Security",
+    "Shadow Pilot (Field Validation)"
 ])
 
 st.sidebar.markdown("---")
@@ -92,6 +93,30 @@ elif mode == "MLOps & Security":
 [2026-09-30 18:24:12] [Safety] PASSED - Fallback controller maintained green wave.
 [2026-09-30 18:24:45] [Edge] API Key rotated for CAM-004
 ''', language="log")
+
+elif mode == "Shadow Pilot (Field Validation)":
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### PILOT STATUS")
+    st.sidebar.markdown("Intersection: **INT-001 (Main & 1st)**")
+    st.sidebar.markdown("Control Mode: **SHADOW**")
+    st.sidebar.markdown("Physical Signal: **UNCHANGED**")
+    
+    st.subheader("Shadow Mode: Live AI Validation")
+    st.warning("MoviSabio is generating live traffic control recommendations. **No commands are being sent to physical hardware.**")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("#### Live Recommendation")
+        st.info("**ACTION**: EXTEND_GREEN (N/S)")
+        st.text("Reason: N_Queue = 12 | S_Queue = 8")
+        st.text("Safety Status: PASSED (Min Green Met)")
+        st.button("Approve (HIL)", key="hil_approve", help="Send to hardware")
+    
+    with col2:
+        st.markdown("#### Pilot Evidence vs Baseline")
+        st.metric("Avg Delay (Shadow vs Baseline)", "38.2 s", delta="-6.8 s (15.1%)", delta_color="inverse")
+        st.metric("Throughput (Shadow vs Baseline)", "1350 vph", delta="+150 vph", delta_color="normal")
+        st.progress(0.998, text="Safety Pass Rate (99.8%)")
 
 elif mode == "Corridor Coordination":
     st.sidebar.markdown("---")
