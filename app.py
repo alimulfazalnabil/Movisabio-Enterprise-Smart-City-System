@@ -12,7 +12,8 @@ mode = st.sidebar.radio("Platform Module", [
     "Live Camera (Edge)", 
     "Corridor Coordination",
     "Digital Twin & What-If",
-    "Enterprise Command Center"
+    "Enterprise Command Center",
+    "MLOps & Security"
 ])
 
 st.sidebar.markdown("---")
@@ -60,6 +61,37 @@ elif mode == "Digital Twin & What-If":
         st.markdown("#### Scenario B (Demand +20%)")
         st.metric("Avg Delay", "45.2 s", delta="+13.8 s", delta_color="inverse")
         st.metric("Avg Queue", "22 vehicles", delta="+11 vehicles", delta_color="inverse")
+
+elif mode == "MLOps & Security":
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### SECURITY STATUS")
+    st.sidebar.markdown("Authentication: **OAuth2 ACTIVE**")
+    st.sidebar.markdown("WAF: **BLOCKING**")
+    st.sidebar.markdown("Audit Log: **ENFORCED**")
+    
+    st.subheader("Model Registry & MLOps")
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.markdown("#### Perception (YOLO)")
+        st.info("v4.2.1 | **PRODUCTION**")
+        st.text("Recall: 0.96 | Drift: Low")
+    with col2:
+        st.markdown("#### Demand Predictor (LSTM)")
+        st.success("v1.8.0 | **PRODUCTION**")
+        st.text("MAE: 1.2 | Drift: Stable")
+    with col3:
+        st.markdown("#### Signal Optimizer (PPO)")
+        st.warning("v0.9.4 | **SHADOW MODE**")
+        st.text("Reward: +14% | Awaiting Approval")
+        
+    st.markdown("---")
+    st.subheader("Security Audit Log (Live)")
+    st.code('''[2026-09-30 18:24:01] [Auth] USER operator-17 Authenticated (MFA)
+[2026-09-30 18:24:05] [Controller] REJECTED - Optimizer PPO-0.9.4 attempted phase switch. Reason: SHADOW_MODE_ONLY
+[2026-09-30 18:24:12] [Safety] PASSED - Fallback controller maintained green wave.
+[2026-09-30 18:24:45] [Edge] API Key rotated for CAM-004
+''', language="log")
 
 elif mode == "Corridor Coordination":
     st.sidebar.markdown("---")

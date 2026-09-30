@@ -1,35 +1,34 @@
-# Stage 1: Build Dependencies
-FROM python:3.12-slim AS builder
+# MoviSabio Enterprise Platform
+FROM python:3.11-slim
 
-WORKDIR /app
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libgl1 \
+# Install system dependencies (SUMO, OpenCV reqs, PostGIS clients)
+RUN apt-get update && apt-get install -y \
+    sumo \
+    sumo-tools \
+    sumo-doc \
+    libgl1-mesa-glx \
     libglib2.0-0 \
+    postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
+# Set up non-root user for security
+RUN useradd -m -s /bin/bash movisabio
+USER movisabio
+WORKDIR /home/movisabio/app
+
+# Install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Stage 2: Runtime Environment
-FROM python:3.12-slim
+# Copy source code
+COPY --chown=movisabio:movisabio . .
 
-WORKDIR /app
+# Set Python path
+ENV PYTHONPATH=/home/movisabio/app
+ENV SUMO_HOME=/usr/share/sumo
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1 \
-    libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
+# Expose API and Dashboard ports
+EXPOSE 8000 8501
 
-COPY --from=builder /install /usr/local
-
-COPY . /app
-
-# Enforce secure non-root user execution
-RUN useradd -u 10001 movisabio && chown -R movisabio:movisabio /app
-USER 10001
-
-EXPOSE 8000
-
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+# Default command (can be overridden by docker-compose)
+CMD ["uvicorn", "backend.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
