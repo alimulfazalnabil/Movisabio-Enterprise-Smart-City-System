@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: movisabio-config
+data:
+  ENVIRONMENT: "pilot"
+  INTERSECTION_WHITELIST: "ID_01"
+  ENABLE_AUTONOMOUS_ACTUATION: "false" # Shadow mode only for pilot initially
