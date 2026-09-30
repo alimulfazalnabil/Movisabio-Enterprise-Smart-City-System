@@ -1,0 +1,34 @@
+{
+  "intersection_id": "INT-001",
+  "name": "Main St & 1st Ave",
+  "legs": {
+    "North": ["N1", "N2", "N3"],
+    "South": ["S1", "S2", "S3"],
+    "East": ["E1", "E2", "E3"],
+    "West": ["W1", "W2", "W3"]
+  },
+  "phases": [
+    {
+      "id": "PHASE_1",
+      "description": "North-South GREEN",
+      "green_lanes": ["N1", "N2", "N3", "S1", "S2", "S3"],
+      "min_green": 10,
+      "max_green": 60,
+      "yellow_time": 4,
+      "all_red_time": 2
+    },
+    {
+      "id": "PHASE_2",
+      "description": "East-West GREEN",
+      "green_lanes": ["E1", "E2", "E3", "W1", "W2", "W3"],
+      "min_green": 10,
+      "max_green": 60,
+      "yellow_time": 4,
+      "all_red_time": 2
+    }
+  ],
+  "conflict_matrix": {
+    "PHASE_1": ["PHASE_2"],
+    "PHASE_2": ["PHASE_1"]
+  }
+}
