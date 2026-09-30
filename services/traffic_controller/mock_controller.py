@@ -1,8 +1,9 @@
 from services.safety.signal_state_machine import SignalStateMachine
 import uuid
 import datetime
+from interfaces.traffic_signal import TrafficSignalInterface
 
-class TrafficSignalController:
+class TrafficSignalController(TrafficSignalInterface):
     """
     Mock Controller acting as the physical traffic light hardware interface.
     """
@@ -35,3 +36,18 @@ class TrafficSignalController:
         }
         
         return audit_log
+        
+    def get_status(self) -> Dict[str, Any]:
+        return self.get_state()
+        
+    def extend_phase(self, seconds: int) -> Dict[str, Any]:
+        return {"action": "extend", "status": "NOT_IMPLEMENTED"}
+        
+    def terminate_phase(self) -> Dict[str, Any]:
+        return {"action": "terminate", "status": "NOT_IMPLEMENTED"}
+        
+    def emergency_priority(self, route_id: str) -> Dict[str, Any]:
+        return {"action": "emergency", "status": "NOT_IMPLEMENTED"}
+        
+    def fail_safe(self) -> Dict[str, Any]:
+        return {"action": "fail_safe", "status": "NOT_IMPLEMENTED"}

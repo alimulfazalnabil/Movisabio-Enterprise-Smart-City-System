@@ -1,8 +1,9 @@
 from services.safety.signal_state_machine import SignalStateMachine
 import datetime
 import uuid
+from interfaces.traffic_signal import TrafficSignalInterface
 
-class SumoController:
+class SumoController(TrafficSignalInterface):
     """
     Implements the Traffic Controller interface for Eclipse SUMO TraCI.
     Translates MoviSabio safe actions into TraCI API calls.
@@ -44,3 +45,15 @@ class SumoController:
                     self.traci_client.set_signal_phase(self.intersection_id, phase_mapping[requested_phase])
                     
         return audit_log
+        
+    def extend_phase(self, seconds: int) -> Dict[str, Any]:
+        return {"action": "extend", "status": "NOT_IMPLEMENTED"}
+        
+    def terminate_phase(self) -> Dict[str, Any]:
+        return {"action": "terminate", "status": "NOT_IMPLEMENTED"}
+        
+    def emergency_priority(self, route_id: str) -> Dict[str, Any]:
+        return {"action": "emergency", "status": "NOT_IMPLEMENTED"}
+        
+    def fail_safe(self) -> Dict[str, Any]:
+        return {"action": "fail_safe", "status": "NOT_IMPLEMENTED"}
