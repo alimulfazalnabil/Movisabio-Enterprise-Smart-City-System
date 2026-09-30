@@ -8,6 +8,14 @@ st.set_page_config(page_title="MoviSabio Command Center", layout="wide")
 st.title("🚦 MoviSabio Traffic Command Center")
 st.markdown("### Intersection: INT-001 (Main St & 1st Ave)")
 
+mode = st.sidebar.radio("Mode", ["Live Camera", "Recorded Video", "SUMO Simulation (RL)"])
+
+if mode == "SUMO Simulation (RL)":
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### RL Agent: **PPO-v2**")
+    st.sidebar.markdown("Episode: 842")
+    st.sidebar.markdown("Cumulative Reward: -142.5")
+
 # --- Mock Live Data ---
 if 'time' not in st.session_state:
     st.session_state.time = 18
