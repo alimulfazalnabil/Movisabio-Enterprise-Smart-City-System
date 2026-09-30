@@ -1,0 +1,9 @@
+{
+  "baseline_controller": "fixed_time",
+  "challenger_controller": "movisabio",
+  "improvements_percentage": {
+    "average_delay": 45.4,
+    "throughput": 31.3,
+    "stops_per_vehicle": 46.5
+  }
+}
