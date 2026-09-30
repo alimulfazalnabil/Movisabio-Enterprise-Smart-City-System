@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     # Authentication
     JWT_SECRET: str
     JWT_ALGORITHM: str = "RS256"
+    JWT_ISSUER: str = "movisabio-identity"
+    JWT_AUDIENCE: str = "movisabio-api"
 
     # API
     CORS_ORIGINS: List[str] = ["*"]
