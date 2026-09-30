@@ -33,4 +33,11 @@ async def health_check(db: AsyncSession = Depends(get_db_session)):
     }
 
 from apps.api.routers import perception
+from apps.api.routers import dashboard
+from infrastructure.observability import setup_observability
+
 app.include_router(perception.router)
+app.include_router(dashboard.router)
+
+# Instrument Observability (Phase 8)
+setup_observability(app)
