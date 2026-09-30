@@ -1,0 +1,6 @@
+apiVersion: v2
+name: movisabio-enterprise
+description: Enterprise Helm Chart for MoviSabio Smart City Platform & AITCS
+type: application
+version: 3.3.0
+appVersion: "3.3.0"

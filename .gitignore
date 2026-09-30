@@ -1,0 +1,84 @@
+# ==============================================================================
+# MOVISABIO ENTERPRISE SMART CITY PLATFORM // GITIGNORE CONFIGURATION
+# ==============================================================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+ENV/
+env/
+.venv/
+
+# Unit Test & Coverage Caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node.js / Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vite/
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+secrets/
+*.pem
+*.key
+
+# Operating System Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDEs, Editors & Local Workspaces
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# Logs & Runtime Dumps
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Infrastructure Local State
+.terraform/
+*.tfstate
+*.tfstate.backup

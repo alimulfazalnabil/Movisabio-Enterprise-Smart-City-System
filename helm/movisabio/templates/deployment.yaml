@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "movisabio-enterprise.fullname" . }}
+  labels:
+    {{- include "movisabio-enterprise.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "movisabio-enterprise.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "movisabio-enterprise.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: enterprise-aitcs-gateway
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 8000
+          name: http-port
+          protocol: TCP
+        env:
+        - name: ENVIRONMENT
+          value: {{ .Values.environment | quote }}
+        - name: REDIS_URL
+          value: "redis://redis-master.movisabio-production.svc.cluster.local:6379/0"
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          runAsNonRoot: true
+          runAsUser: 10001
+      restartPolicy: Always

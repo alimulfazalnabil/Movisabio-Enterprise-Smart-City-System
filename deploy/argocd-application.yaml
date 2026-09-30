@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: movisabio-enterprise-production
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: movisabio-enterprise-production
+    environment: production
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/movisabio/enterprise-platform.git'
+    targetRevision: HEAD
+    path: deploy
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: movisabio-production
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

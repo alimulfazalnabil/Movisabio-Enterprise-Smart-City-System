@@ -1,0 +1,57 @@
+{
+  "": "http://json-schema.org/draft-07/schema#",
+  "title": "CameraObservation",
+  "type": "object",
+  "properties": {
+    "event_id": {
+      "type": "string"
+    },
+    "schema_version": {
+      "type": "string",
+      "default": "1.0"
+    },
+    "intersection_id": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "producer": {
+      "type": "string"
+    },
+    "sequence_number": {
+      "type": "integer"
+    },
+    "model_version": {
+      "type": "string"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "camera_id": {
+      "type": "string"
+    },
+    "frame_url": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "DEGRADED",
+        "OFFLINE"
+      ]
+    }
+  },
+  "required": [
+    "event_id",
+    "schema_version",
+    "intersection_id",
+    "timestamp",
+    "producer",
+    "sequence_number"
+  ]
+}

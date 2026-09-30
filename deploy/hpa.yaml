@@ -1,0 +1,22 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: aitcs-hpa
+  namespace: movisabio-production
+  labels:
+    app.kubernetes.io/name: movisabio-enterprise-aitcs
+    app.kubernetes.io/managed-by: argocd
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: movisabio-enterprise-aitcs-deployment
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 75

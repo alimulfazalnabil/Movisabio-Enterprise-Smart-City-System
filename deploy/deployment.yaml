@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: movisabio-enterprise-aitcs-deployment
+  namespace: movisabio-production
+  labels:
+    app.kubernetes.io/name: movisabio-enterprise-aitcs
+    app.kubernetes.io/part-of: movisabio-smart-city
+    app.kubernetes.io/managed-by: argocd
+    environment: production
+spec:
+  replicas: 3
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: movisabio-enterprise-aitcs
+  template:
+    metadata:
+      labels:
+        app: movisabio-enterprise-aitcs
+    spec:
+      containers:
+      - name: enterprise-aitcs-gateway
+        image: ghcr.io/movisabio/enterprise-aitcs:v3.1.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+          name: http-port
+          protocol: TCP
+        env:
+        - name: ENVIRONMENT
+          value: "production"
+        - name: REDIS_URL
+          value: "redis://redis-master.movisabio-production.svc.cluster.local:6379/0"
+        - name: AZURE_IOT_HUB_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: movisabio-secrets
+              key: iot-hub-connection-string
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: movisabio-secrets
+              key: postgres-connection-string
+        - name: MOVISABIO_JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: movisabio-secrets
+              key: jwt-secret
+        - name: MOVISABIO_WEBHOOK_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: movisabio-secrets
+              key: webhook-secret
+        resources:
+          limits:
+            cpu: "2000m"
+            memory: "4Gi"
+          requests:
+            cpu: "1000m"
+            memory: "2Gi"
+        livenessProbe:
+          httpGet:
+            path: /api/v1/observability/health
+            port: 8000
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/v1/observability/health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 2
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          runAsNonRoot: true
+          runAsUser: 10001
+      restartPolicy: Always

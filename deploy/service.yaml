@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: movisabio-smart-city-service
+  namespace: movisabio-production
+  labels:
+    app.kubernetes.io/name: movisabio-enterprise-aitcs
+    app.kubernetes.io/part-of: movisabio-smart-city
+    app.kubernetes.io/managed-by: argocd
+    environment: production
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: http-port
+    protocol: TCP
+    name: http-port
+  selector:
+    app: movisabio-enterprise-aitcs
