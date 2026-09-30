@@ -6,15 +6,22 @@ import time
 st.set_page_config(page_title="MoviSabio Command Center", layout="wide")
 
 st.title("🚦 MoviSabio Traffic Command Center")
-st.markdown("### Intersection: INT-001 (Main St & 1st Ave)")
+st.markdown("### Corridor: CORRIDOR-001 (Main St Arterial)")
 
-mode = st.sidebar.radio("Mode", ["Live Camera", "Recorded Video", "SUMO Simulation (RL)"])
+mode = st.sidebar.radio("Mode", ["Live Camera", "Recorded Video", "SUMO Simulation (RL)", "Corridor Coordination"])
 
-if mode == "SUMO Simulation (RL)":
+if mode == "Corridor Coordination":
     st.sidebar.markdown("---")
-    st.sidebar.markdown("### RL Agent: **PPO-v2**")
-    st.sidebar.markdown("Episode: 842")
-    st.sidebar.markdown("Cumulative Reward: -142.5")
+    st.sidebar.markdown("### AI STATUS")
+    st.sidebar.markdown("Prediction: **ONLINE**")
+    st.sidebar.markdown("Optimizer: **Multi-Agent PPO**")
+    st.sidebar.markdown("Safety Engine: **ACTIVE**")
+    
+    st.subheader("Network Topology")
+    st.markdown("""
+    `INT-001` ─── `INT-002` ─── `INT-003` ─── `INT-004`
+    🟢 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 🟢 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 🔴 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 🟢
+    """)
 
 # --- Mock Live Data ---
 if 'time' not in st.session_state:
