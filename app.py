@@ -5,10 +5,15 @@ import time
 
 st.set_page_config(page_title="MoviSabio Command Center", layout="wide")
 
-st.title("🚦 MoviSabio Traffic Command Center")
-st.markdown("### Corridor: CORRIDOR-001 (Main St Arterial)")
+st.title("🚦 MoviSabio Territorial Intelligence")
+st.markdown("### Tenant: City of Campinas | Region: São Paulo")
 
-mode = st.sidebar.radio("Mode", ["Live Camera", "Recorded Video", "SUMO Simulation (RL)", "Corridor Coordination"])
+mode = st.sidebar.radio("Platform Module", [
+    "Live Camera (Edge)", 
+    "Corridor Coordination",
+    "Digital Twin & What-If",
+    "Enterprise Command Center"
+])
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### EDGE AI HEALTH (CAM-001)")
@@ -17,7 +22,46 @@ st.sidebar.markdown("Camera FPS: **24.0**")
 st.sidebar.markdown("Inference Latency: **31.4 ms**")
 st.sidebar.markdown("Detection Confidence: **94%**")
 
-if mode == "Corridor Coordination":
+if mode == "Enterprise Command Center":
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### PLATFORM STATUS")
+    st.sidebar.markdown("Tenant: **Campinas-01**")
+    st.sidebar.markdown("Data Layer: **PostGIS ONLINE**")
+    st.sidebar.markdown("Event Bus: **Kafka ACTIVE**")
+    
+    st.subheader("Global Territorial Overview")
+    col1, col2, col3 = st.columns(3)
+    col1.metric(label="Total Intersections", value="24", delta="Active")
+    col2.metric(label="Edge Nodes Online", value="22", delta="-2 Offline", delta_color="inverse")
+    col3.metric(label="Global Congestion Index", value="0.45", delta="-0.02 (Improving)")
+    
+    st.markdown("---")
+    st.markdown("### Cross-Domain Intelligence")
+    colA, colB, colC = st.columns(3)
+    colA.info("**Mobility**: 4 Active Green Waves")
+    colB.success("**Environment**: AQI 42 (Good)")
+    colC.warning("**Incidents**: 1 Minor Accident (Resolved)")
+
+elif mode == "Digital Twin & What-If":
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### SIMULATION ENGINE")
+    st.sidebar.markdown("Engine: **SUMO Cloud**")
+    st.sidebar.markdown("Scenario: **Demand +20%**")
+    
+    st.subheader("What-If Scenario Analysis")
+    st.markdown("Running scenario against Digital Twin: `INT-001`")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("#### Scenario A (Current AI)")
+        st.metric("Avg Delay", "31.4 s")
+        st.metric("Avg Queue", "11 vehicles")
+    with col2:
+        st.markdown("#### Scenario B (Demand +20%)")
+        st.metric("Avg Delay", "45.2 s", delta="+13.8 s", delta_color="inverse")
+        st.metric("Avg Queue", "22 vehicles", delta="+11 vehicles", delta_color="inverse")
+
+elif mode == "Corridor Coordination":
     st.sidebar.markdown("---")
     st.sidebar.markdown("### CLOUD AI STATUS")
     st.sidebar.markdown("Prediction: **ONLINE**")
