@@ -1,0 +1,7 @@
+# Production Configuration
+APP_ENV: "production"
+LOG_LEVEL: "INFO"
+
+# Database urls must be injected via .env or secrets manager
+# DATABASE_URL: ""
+# REDIS_URL: ""

@@ -1,0 +1,10 @@
+# Base Enterprise Configuration
+APP_NAME: "MoviSabio Territorial Intelligence Platform"
+APP_VERSION: "0.1.0-enterprise-foundation"
+
+LOG_LEVEL: "INFO"
+JWT_ALGORITHM: "HS256"
+
+# Default fallback values (can be overridden by .env or env.yaml)
+CORS_ORIGINS:
+  - "*"

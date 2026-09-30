@@ -82,3 +82,20 @@ yarn-error.log*
 .terraform/
 *.tfstate
 *.tfstate.backup
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+__pycache__/
+.pytest_cache/
+.venv/
+
+# Node
+node_modules/
+dist/
+build/
