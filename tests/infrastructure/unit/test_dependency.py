@@ -71,4 +71,5 @@ def test_dependency_engine_circular_dependency():
     
     # Should resolve gracefully without infinite loop
     assert "GENERATOR-1" in impacted
-    assert len(impacted) == 1
+    assert "PUMP-1" in impacted
+    assert len(impacted) == 2
