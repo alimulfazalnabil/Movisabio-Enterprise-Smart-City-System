@@ -32,3 +32,23 @@ class User(BaseEntity):
     
     # Simple role mapping for now (real RBAC typically has separate Permission/UserRole tables)
     role = Column(Enum(PlatformRole), default=PlatformRole.VIEWER, nullable=False)
+
+class AccessGrant(BaseEntity):
+    """
+    Temporary delegated access or break-glass access log.
+    """
+    __tablename__ = "access_grants"
+
+    id = Column(String, primary_key=True, default=lambda: generate_ulid_like_id("grant"))
+    
+    subject_id = Column(String, index=True, nullable=False)
+    resource_type = Column(String, nullable=True) # e.g. intersection, tenant
+    resource_id = Column(String, nullable=True)
+    
+    permissions = Column(String, nullable=False) # JSON array of permissions
+    
+    starts_at = Column(String, nullable=False)
+    expires_at = Column(String, nullable=False)
+    
+    granted_by = Column(String, nullable=False)
+    revoked_at = Column(String, nullable=True)
