@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     REDIS_URL: str
 
     # Authentication
+    FRONTEND_CORS_ORIGINS: str = "*"
+    API_RATE_LIMIT: int = 100
+    
     JWT_SECRET: str
     JWT_ALGORITHM: str = "RS256"
     JWT_ISSUER: str = "movisabio-identity"
