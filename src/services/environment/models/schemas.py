@@ -10,6 +10,7 @@ class DataQuality(str, Enum):
     INVALID = "INVALID"
     MISSING = "MISSING"
     CALIBRATION_REQUIRED = "CALIBRATION_REQUIRED"
+    UNKNOWN = "UNKNOWN"
 
 class GeoPoint(BaseModel):
     lat: float
