@@ -7,6 +7,7 @@ from typing import Optional
 current_user_id: ContextVar[Optional[str]] = ContextVar("current_user_id", default=None)
 current_tenant_id: ContextVar[Optional[str]] = ContextVar("current_tenant_id", default=None)
 current_request_id: ContextVar[Optional[str]] = ContextVar("current_request_id", default=None)
+current_correlation_id: ContextVar[Optional[str]] = ContextVar("current_correlation_id", default=None)
 
 def set_tenant_context(tenant_id: str):
     """Sets the tenant context for the current execution flow."""
@@ -21,3 +22,13 @@ def set_user_context(user_id: str):
 
 def get_user_context() -> Optional[str]:
     return current_user_id.get()
+
+def set_trace_context(request_id: str, correlation_id: str):
+    current_request_id.set(request_id)
+    current_correlation_id.set(correlation_id)
+
+def get_trace_context() -> dict:
+    return {
+        "request_id": current_request_id.get(),
+        "correlation_id": current_correlation_id.get()
+    }
