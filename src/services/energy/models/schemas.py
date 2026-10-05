@@ -1,68 +1,32 @@
-from enum import Enum
-from typing import Optional, List
+from typing import List, Dict, Optional
 from datetime import datetime
 from pydantic import BaseModel
 
-class ConnectorStatus(str, Enum):
-    AVAILABLE = "AVAILABLE"
-    PREPARING = "PREPARING"
-    CHARGING = "CHARGING"
-    SUSPENDED = "SUSPENDED"
-    FINISHING = "FINISHING"
-    FAULTED = "FAULTED"
-    UNAVAILABLE = "UNAVAILABLE"
-    RESERVED = "RESERVED"
-    UNKNOWN = "UNKNOWN"
+class EnergyAsset(BaseModel):
+    asset_id: str
+    territory_id: str
+    asset_type: str # SOLAR_FARM, SUBSTATION, FEEDER, BATTERY, EV_CHARGER
+    rated_power_kw: float
+    operational_status: str
 
-class EVVehicle(BaseModel):
-    vehicle_id: str
-    tenant_id: str
-    vehicle_type: str
-    fleet_id: Optional[str] = None
-    battery_capacity_kwh: Optional[float] = None
-    state_of_charge: Optional[float] = None
-    current_location: Optional[dict] = None
-    destination: Optional[dict] = None
-    charging_state: str = "UNKNOWN"
-    energy_consumption_rate: Optional[float] = None
-    estimated_range: Optional[float] = None
-    timestamp: datetime
+class GridCongestionState(BaseModel):
+    asset_id: str
+    territory_id: str
+    current_load_kw: float
+    rated_capacity_kw: float
+    state: str # NORMAL, ELEVATED, CONSTRAINED, CONGESTED, FAILURE_RISK
+    confidence: float
+    time_horizon_minutes: int
 
-class EVConnector(BaseModel):
-    connector_id: str
-    station_id: str
-    connector_type: str
-    max_power_kw: float
-    current_power_kw: float = 0.0
-    voltage: Optional[float] = None
-    current: Optional[float] = None
-    status: ConnectorStatus = ConnectorStatus.UNKNOWN
-    vehicle_id: Optional[str] = None
-    session_id: Optional[str] = None
+class CriticalLoadAsset(BaseModel):
+    asset_id: str
+    asset_type: str # HOSPITAL, WATER_PUMP, TRAFFIC_CONTROL
+    criticality: str # HIGH, CRITICAL
+    backup_capacity_kw: float
+    backup_duration_minutes: int
 
-class ChargingStation(BaseModel):
-    station_id: str
-    tenant_id: str
-    site_id: str
-    location: dict
-    operator: str
-    status: str
-    connector_count: int
-    power_capacity_kw: float
-    accessibility: str
-    pricing_policy: Optional[str] = None
-    grid_connection_id: str
-    connectors: List[EVConnector] = []
-
-class EnergyState(BaseModel):
-    site_id: str
-    grid_import_kw: float
-    grid_export_kw: float
-    renewable_generation_kw: float
-    ev_load_kw: float
-    battery_charge_kw: float
-    battery_discharge_kw: float
-    building_load_kw: float
-    available_capacity_kw: float
-    timestamp: datetime
-    quality: str
+class GridOutage(BaseModel):
+    outage_id: str
+    affected_feeders: List[str]
+    status: str # DETECTED, IMPACT_ASSESSED, RESTORATION, CLOSED
+    affected_critical_loads: List[str]
