@@ -35,7 +35,11 @@ class TrafficOptimizer:
             "expected_queue": max(ns_queue, ew_queue),
             "expected_throughput": 1200.0,
             "confidence": 0.85,
-            "explanation": f"NS={ns_queue}, EW={ew_queue}"
+            "explanation": f"NS={ns_queue}, EW={ew_queue}",
+            "counterfactual_baseline": {
+                "expected_delay_without_intervention": 25.0,
+                "expected_queue_without_intervention": max(ns_queue, ew_queue) + 10
+            }
         }
 
     def _rl_policy(self, traffic_state: dict, signal_state: dict) -> dict:
@@ -47,5 +51,9 @@ class TrafficOptimizer:
             "expected_queue": 5,
             "expected_throughput": 1500.0,
             "confidence": 0.95,
-            "explanation": "RL_PPO"
+            "explanation": "RL_PPO",
+            "counterfactual_baseline": {
+                "expected_delay_without_intervention": 25.0,
+                "expected_queue_without_intervention": 20
+            }
         }
