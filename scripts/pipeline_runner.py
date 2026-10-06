@@ -12,6 +12,7 @@ from backend.app.traffic.state import TrafficStateAggregator
 from backend.app.traffic.optimizer import TrafficOptimizer
 from backend.app.safety.engine import SafetyEngine
 from backend.app.traffic.controller import MockSignalController
+from backend.app.observability.metrics import metrics
 
 async def run_pipeline_loop():
     print("Initializing MoviSabio Pipeline Runner...")
@@ -42,6 +43,8 @@ async def run_pipeline_loop():
         try:
             # 2. Mock CV Pipeline: Video -> YOLO -> Tracking
             frame = video_source.get_frame()
+            metrics.inc("frames_processed_total")
+            
             # Generate fake tracks for demo purposes instead of real YOLO inference
             tracks = []
             for _ in range(np.random.randint(5, 30)):
@@ -52,6 +55,10 @@ async def run_pipeline_loop():
                 # Mock speed by updating position
                 t.update([x-0.5, y-0.5, x+1.5, y+1.5], datetime.now(timezone.utc))
                 tracks.append(t)
+            
+            metrics.inc("detections_total", len(tracks))
+            metrics.inc("tracks_active", len(tracks))
+            metrics.inc("vehicles_counted_total", len(tracks))
             
             # 3. Traffic State Aggregation
             state_dict = state_aggregator.aggregate(intersection_id, tracks)
@@ -83,7 +90,10 @@ async def run_pipeline_loop():
             # 7. Mock Signal Controller (HIL equivalent)
             if safety_result["status"] == "VALIDATED":
                 recommendation["command_id"] = str(uuid.uuid4())
+                metrics.inc("signal_commands_total")
                 success = controller.send_command(intersection_id, recommendation)
+                if not success:
+                    metrics.inc("signal_command_failures")
                 
                 # Save command to DB
                 async with AsyncSessionLocal() as db:
@@ -102,8 +112,11 @@ async def run_pipeline_loop():
                     )
                     db.add(cmd)
                     await db.commit()
+            else:
+                metrics.inc("safety_rejections_total")
             
             print(f"[{datetime.now().isoformat()}] Pipeline Tick: {len(tracks)} tracks. Decision: {recommendation['recommended_phase']} (Safety: {safety_result['status']})")
+            print(f"Metrics: {metrics.counters}")
             
         except Exception as e:
             print(f"Pipeline Error: {e}")

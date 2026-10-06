@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     DATABASE_URL: str = "postgresql+asyncpg://movisabio:movisabiosecret@localhost:5432/movisabio"
     REDIS_URL: str = "redis://localhost:6379/0"
+    CONTROLLER_MODE: str = "mock"
 
     class Config:
         env_file = ".env"
