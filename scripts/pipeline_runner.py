@@ -11,7 +11,7 @@ from backend.app.traffic.speed import SpeedEstimator
 from backend.app.traffic.state import TrafficStateAggregator
 from backend.app.traffic.optimizer import TrafficOptimizer
 from backend.app.safety.engine import SafetyEngine
-from backend.app.traffic.controller import MockSignalController
+from backend.app.services.signal_control.mock_controller import MockSignalController
 from backend.app.observability.metrics import metrics
 
 async def run_pipeline_loop():
