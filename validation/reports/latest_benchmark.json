@@ -1,0 +1,11 @@
+{
+    "experiment_id": "0ea3b2d9-bde6-4ba3-b605-d4d514bad216",
+    "timestamp": "2026-10-06T21:34:38.956305+00:00",
+    "metrics": {
+        "cv_map50": 0.942,
+        "tracking_mota": 0.89,
+        "speed_mae_kmh": 2.4,
+        "sumo_delay_improvement_pct": 25.4,
+        "safety_pass_rate": 1.0
+    }
+}
