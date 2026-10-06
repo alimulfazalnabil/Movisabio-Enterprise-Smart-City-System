@@ -128,3 +128,52 @@ class PilotDataset(Base):
     source = Column(String)
     model_version = Column(String)
     privacy_classification = Column(String)
+
+class Corridor(Base):
+    __tablename__ = "corridors"
+    corridor_id = Column(String, primary_key=True)
+    tenant_id = Column(String)
+    city_id = Column(String)
+    name = Column(String)
+    geometry = Column(Geometry('LINESTRING'))
+    direction = Column(String)
+    speed_profile = Column(JSON)
+    capacity_profile = Column(JSON)
+    operating_policy = Column(String)
+    status = Column(String)
+
+class CorridorIntersection(Base):
+    __tablename__ = "corridor_intersections"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    corridor_id = Column(String, ForeignKey("corridors.corridor_id"))
+    intersection_id = Column(String, ForeignKey("intersections.intersection_id"))
+    sequence_order = Column(Integer)
+
+class IntersectionRelationship(Base):
+    __tablename__ = "intersection_relationships"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    source_id = Column(String, ForeignKey("intersections.intersection_id"))
+    target_id = Column(String, ForeignKey("intersections.intersection_id"))
+    relationship_type = Column(String) # UPSTREAM, DOWNSTREAM, PARALLEL, FEEDER
+    distance_m = Column(Float)
+    travel_time_s = Column(Float)
+
+class CorridorState(Base):
+    __tablename__ = "corridor_states"
+    state_id = Column(Integer, primary_key=True, autoincrement=True)
+    corridor_id = Column(String, ForeignKey("corridors.corridor_id"), index=True)
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), index=True)
+    vehicle_count = Column(Integer)
+    flow = Column(Float)
+    average_speed = Column(Float)
+    density = Column(Float)
+    occupancy = Column(Float)
+    queue_length = Column(Float)
+    travel_time = Column(Float)
+    delay = Column(Float)
+    stops = Column(Float)
+    spillback_risk = Column(Float)
+    bottleneck_score = Column(Float)
+    congestion_level = Column(Enum(TrafficStateEnum))
+    incident_state = Column(String)
+    data_quality = Column(String)
