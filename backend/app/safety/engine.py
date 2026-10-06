@@ -6,6 +6,7 @@ class SafetyEngine:
         self.max_green = config.get("max_green", 120.0)
         self.yellow_duration = config.get("yellow_duration", 3.0)
         self.all_red_duration = config.get("all_red_duration", 2.0)
+        self.valid_phases = config.get("valid_phases", {"NS_GREEN", "EW_GREEN", "ALL_RED"})
 
     def validate_command(self, current_state: dict, proposed_command: dict) -> dict:
         current_phase = current_state.get("phase")
@@ -13,6 +14,13 @@ class SafetyEngine:
         
         proposed_phase = proposed_command.get("recommended_phase")
         duration = proposed_command.get("duration", 0.0)
+
+        # Validate Phase
+        if proposed_phase not in self.valid_phases:
+            return {
+                "status": "REJECTED",
+                "reason": f"INVALID_PHASE: {proposed_phase} is not allowed."
+            }
 
         # Ensure minimum green
         if current_phase != proposed_phase and elapsed < self.min_green:
