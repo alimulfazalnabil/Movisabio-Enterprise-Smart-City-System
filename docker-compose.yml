@@ -45,5 +45,28 @@ services:
       - DATABASE_URL=postgresql+asyncpg://movisabio:movisabiosecret@db:5432/movisabio
       - REDIS_URL=redis://redis:6379/0
 
+  worker:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    container_name: movisabio_worker
+    depends_on:
+      api:
+        condition: service_started
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://movisabio:movisabiosecret@db:5432/movisabio
+      - REDIS_URL=redis://redis:6379/0
+    command: ["python", "scripts/pipeline_runner.py"]
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    container_name: movisabio_dashboard
+    ports:
+      - "8501:8501"
+    depends_on:
+      - api
+
 volumes:
   pgdata:

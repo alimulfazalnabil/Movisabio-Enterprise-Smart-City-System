@@ -198,16 +198,32 @@ elif mode == "Corridor Coordination":
 [2026-09-30 18:25:40] [Control] Ambulance cleared. Re-syncing green wave offsets.
 ''', language="log")
 
-# --- Mock Live Data ---
+import requests
+
+# --- Live Data Integration ---
 if 'time' not in st.session_state:
     st.session_state.time = 18
 
 def get_live_data():
+    try:
+        response = requests.get("http://localhost:8000/api/v1/intersections/INT-001/traffic-state")
+        if response.status_code == 200:
+            state = response.json()
+            return {
+                "vehicles": state.get("vehicle_count", 0),
+                "avg_speed": round(state.get("average_speed", 0.0), 1),
+                "queue": int(state.get("queue_length", 0)),
+                "congestion": state.get("congestion_level", "UNKNOWN")
+            }
+    except Exception as e:
+        pass
+    
+    # Fallback to mock if API is not running yet
     return {
         "vehicles": np.random.randint(100, 150),
         "avg_speed": round(np.random.uniform(25.0, 35.0), 1),
         "queue": np.random.randint(30, 50),
-        "congestion": round(np.random.uniform(0.5, 0.8), 2)
+        "congestion": "FREE"
     }
 
 data = get_live_data()

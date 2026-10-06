@@ -2,10 +2,21 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from backend.app.config import settings
 
+from contextlib import asynccontextmanager
+from backend.app.database.session import engine
+from backend.app.models.traffic import Base
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    description="MoviSabio Enterprise Traffic Intelligence Platform"
+    description="MoviSabio Enterprise Traffic Intelligence Platform",
+    lifespan=lifespan
 )
 
 @app.get("/health")
@@ -20,3 +31,7 @@ async def liveness_check():
 async def readiness_check():
     # In future, check DB and Redis connectivity here
     return {"status": "ready"}
+
+from backend.app.api.v1 import cameras, traffic
+app.include_router(cameras.router, prefix="/api/v1/cameras", tags=["cameras"])
+app.include_router(traffic.router, prefix="/api/v1", tags=["traffic"])

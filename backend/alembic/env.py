@@ -20,6 +20,10 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 import sys; sys.path.insert(0, '..'); from backend.app.models.traffic import Base
 target_metadata = Base.metadata
+import os
+from dotenv import load_dotenv
+load_dotenv('.env.development')
+config.set_main_option('sqlalchemy.url', os.environ.get('DATABASE_URL', ''))
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
