@@ -13,12 +13,17 @@ class TrafficStateEnum(str, enum.Enum):
     SEVERE = "SEVERE"
     UNKNOWN = "UNKNOWN"
 
-class SignalModeEnum(str, enum.Enum):
-    SIMULATION = "SIMULATION"
-    SHADOW = "SHADOW"
+class OperatingModeEnum(str, enum.Enum):
+    OFF = "OFF"
     MANUAL = "MANUAL"
-    AUTOMATIC = "AUTOMATIC"
-    FAULT = "FAULT"
+    SIMULATION = "SIMULATION"
+    HIL = "HIL"
+    SHADOW = "SHADOW"
+    ASSISTED = "ASSISTED"
+    LIMITED_AUTOMATIC = "LIMITED_AUTOMATIC"
+    AUTHORIZED_AUTOMATIC = "AUTHORIZED_AUTOMATIC"
+    EMERGENCY = "EMERGENCY"
+    FAILSAFE = "FAILSAFE"
 
 class Camera(Base):
     __tablename__ = "cameras"
@@ -74,7 +79,7 @@ class TrafficSignal(Base):
     elapsed = Column(Float)
     remaining = Column(Float)
     health = Column(String)
-    mode = Column(Enum(SignalModeEnum))
+    mode = Column(Enum(OperatingModeEnum))
 
 class SignalCommand(Base):
     __tablename__ = "signal_commands"
@@ -90,3 +95,36 @@ class SignalCommand(Base):
     authorization = Column(String)
     timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     status = Column(String)
+
+class Incident(Base):
+    __tablename__ = "incidents"
+    incident_id = Column(String, primary_key=True)
+    intersection_id = Column(String, ForeignKey("intersections.intersection_id"))
+    severity = Column(String)
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    detected_by = Column(String)
+    description = Column(String)
+    root_cause = Column(String)
+    resolution = Column(String)
+    status = Column(String)
+
+class HumanOverride(Base):
+    __tablename__ = "human_overrides"
+    override_id = Column(Integer, primary_key=True, autoincrement=True)
+    intersection_id = Column(String, ForeignKey("intersections.intersection_id"))
+    operator_id = Column(String)
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    ai_recommendation = Column(JSON)
+    operator_decision = Column(String)
+    reason = Column(String)
+    result = Column(String)
+
+class PilotDataset(Base):
+    __tablename__ = "pilot_datasets"
+    dataset_id = Column(String, primary_key=True)
+    site_id = Column(String)
+    time_range_start = Column(DateTime(timezone=True))
+    time_range_end = Column(DateTime(timezone=True))
+    source = Column(String)
+    model_version = Column(String)
+    privacy_classification = Column(String)
