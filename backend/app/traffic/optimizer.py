@@ -15,9 +15,9 @@ class TrafficOptimizer:
         
         for lane_id, lane_data in traffic_state.get("lane_states", {}).items():
             if "N" in lane_id or "S" in lane_id:
-                ns_queue += lane_data.get("instantaneous_count", 0)
+                ns_queue += lane_data.get("current_vehicle_count", 0)
             elif "E" in lane_id or "W" in lane_id:
-                ew_queue += lane_data.get("instantaneous_count", 0)
+                ew_queue += lane_data.get("current_vehicle_count", 0)
                 
         current_phase = signal_state.get("phase", "NS_GREEN")
         
@@ -33,8 +33,9 @@ class TrafficOptimizer:
             "duration": 30.0 if recommended != current_phase else signal_state.get("remaining", 30.0),
             "expected_delay": 15.0,
             "expected_queue": max(ns_queue, ew_queue),
+            "expected_throughput": 1200.0,
             "confidence": 0.85,
-            "rationale": f"NS={ns_queue}, EW={ew_queue}"
+            "explanation": f"NS={ns_queue}, EW={ew_queue}"
         }
 
     def _rl_policy(self, traffic_state: dict, signal_state: dict) -> dict:
@@ -44,6 +45,7 @@ class TrafficOptimizer:
             "duration": 30.0,
             "expected_delay": 10.0,
             "expected_queue": 5,
+            "expected_throughput": 1500.0,
             "confidence": 0.95,
-            "rationale": "RL_PPO"
+            "explanation": "RL_PPO"
         }
