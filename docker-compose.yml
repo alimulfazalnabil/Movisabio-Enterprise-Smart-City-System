@@ -1,75 +1,33 @@
-name: movisabio-smartcity
+version: '3.8'
 
 services:
-  redis:
-    image: redis:7-alpine
-    container_name: movisabio-redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    restart: unless-stopped
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-
-  postgres:
-    image: postgres:15-alpine
-    container_name: movisabio-postgres
+  db:
+    image: postgis/postgis:15-3.3
+    container_name: movisabio_db
     environment:
-      POSTGRES_USER: movisabio_admin
-      POSTGRES_PASSWORD: secure_db_password_change_me
-      POSTGRES_DB: movisabio_db
+      POSTGRES_USER: movisabio
+      POSTGRES_PASSWORD: movisabiosecret
+      POSTGRES_DB: movisabio
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U movisabio_admin -d movisabio_db" ]
+      test: ["CMD-SHELL", "pg_isready -U movisabio"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: movisabio_redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
       retries: 5
 
-  gateway:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: movisabio-gateway
-    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --workers 1
-    ports:
-      - "8000:8000"
-    environment:
-      ENVIRONMENT: development
-      REDIS_URL: redis://redis:6379/0
-      DATABASE_URL: postgresql+asyncpg://movisabio_admin:secure_db_password_change_me@postgres:5432/movisabio_db
-    depends_on:
-      redis:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
-
-  observability-gateway:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: movisabio-observability
-    command: uvicorn backend.services.observability:app --host 0.0.0.0 --port 8031
-    ports:
-      - "8031:8031"
-    environment:
-      - REDIS_URL=redis://redis:6379/0
-      - DATABASE_URL=postgresql+asyncpg://movisabio_admin:secure_db_password_change_me@postgres:5432/movisabio_db
-    depends_on:
-      redis:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
-
 volumes:
-  redis_data:
-  postgres_data:
+  pgdata:
