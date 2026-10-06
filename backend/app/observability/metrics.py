@@ -10,7 +10,8 @@ class MetricsRegistry:
             "speed_estimation_errors": 0,
             "safety_rejections_total": 0,
             "signal_commands_total": 0,
-            "signal_command_failures": 0
+            "signal_command_failures": 0,
+            "corridor_commands_issued": 0
         }
         self.latencies: Dict[str, list] = {
             "traffic_state_latency": [],
