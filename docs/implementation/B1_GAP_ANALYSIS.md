@@ -1,98 +1,191 @@
-# Phase B1 — Full Repository Audit & Architecture Gap Matrix
+# B1 — Repository Audit & Architecture Gap Matrix
 
 ## 1. Executive Summary
 
-This document establishes the exact delta between the frozen MoviSabio Enterprise Platform Architecture (A4.37) and the current state of the GitHub repository. It acts as the definitive ledger of technical debt, existing capabilities, and the required implementation roadmap for Phase B.
+This document represents the definitive **B1 Repository Audit** against the frozen MoviSabio A4.37 Architecture. 
 
-The current repository contains a highly developed **logical domain model** (Python Pydantic schemas, isolated domain stubs, and unit tests). It successfully demonstrates the architectural relationships across 50+ domains. However, it lacks the **production scaffolding** necessary to run as a live, cyber-physical platform (e.g., FastAPIs, databases, Docker, CV models, Kafka, UI).
+**Conclusion:** The repository contains a highly developed **logical domain model** (Python Pydantic schemas, isolated domain stubs, `main.py` pipeline mocks, Streamlit dashboard mocks, and hundreds of passing unit tests). It successfully demonstrates the architectural relationships across domains. 
 
-## 2. Component Target vs Current Matrix
+However, it lacks the **production engineering scaffolding** necessary to run as a live, cyber-physical platform (e.g., FastAPIs, PostGIS databases, Docker, live CV models, Kafka, UI). The system currently relies on in-memory mocks (`MockYOLOTracker`, `MockLaneManager`, etc.).
 
-| Component | Architecture Target | Current Repository State | Status | Priority |
-|---|---|---|---|---|
-| **Backend API** | FastAPI production API | Headless logic only. No endpoints or routers. | 🔴 Missing | P0 |
-| **PostgreSQL/PostGIS** | Multi-tenant spatial DB | In-memory Python dictionaries. No ORM or DB connections. | 🔴 Missing | P0 |
-| **Authentication** | OIDC/OAuth2 | Stubbed `SecurityManager`. No real auth mechanism. | 🔴 Missing | P0 |
-| **RBAC** | RBAC + ABAC | Domain models defined. Logic is mocked. | 🟡 Partial | P0 |
-| **Traffic ingestion** | Production ingestion | Domain schemas exist (`TrafficDetection`). No actual stream ingestion. | 🔴 Missing | P0 |
-| **YOLO detection** | Vehicle detection | Blank/stub CV directories. No PyTorch/ONNX models integrated. | 🔴 Missing | P0 |
-| **Tracking** | Multi-object tracking | Schemas exist. No DeepSORT/ByteTrack implementation. | 🔴 Missing | P0 |
-| **Lane counting** | Lane-wise analytics | Stubs exist in `src/domain/traffic`. | 🔴 Missing | P0 |
-| **Speed estimation** | Calibrated estimation | Logic modeled, but no real-world homography/perspective logic. | 🔴 Missing | P0 |
-| **Traffic state** | Congestion intelligence | Robust schemas and mock calculators exist. | 🟡 Partial | P0 |
-| **Prediction** | Forecasting | ML architecture stubbed. No actual TensorFlow/PyTorch prediction code. | 🔴 Missing | P1 |
-| **SUMO** | Simulation | Traci/SUMO schemas exist. No actual SUMO `.net.xml` or TraCI loops. | 🔴 Missing | P0 |
-| **RL optimization** | DQN/PPO/etc. | Defined in architecture. Not present in code. | 🔴 Missing | P1 |
-| **Safety engine** | Hard constraints | High-quality logic implemented and tested (`SafetyEngine`). Needs DB persistence. | 🟢 Ready | P0 |
-| **Signal controller** | Individual signal control | Mock classes only. | 🔴 Missing | P0 |
-| **Dashboard** | Operational dashboard | No frontend code (React or Streamlit) exists. | 🔴 Missing | P0 |
-| **Audit** | Decision/action audit | `ActionLedger` built and tested. Needs DB backend. | 🟢 Ready | P0 |
-| **Observability** | Metrics/logging/tracing | Only standard `print` or `logging`. No OpenTelemetry. | 🔴 Missing | P0 |
-| **Docker** | Reproducible deployment | No `Dockerfile` or `docker-compose.yml`. | 🔴 Missing | P0 |
-| **CI/CD** | Automated pipeline | No GitHub Actions workflows. | 🔴 Missing | P1 |
-| **Digital Twin** | Territorial sim state | Domain logic exists. Not wired to a real state machine. | 🟡 Partial | P1 |
-| **Knowledge Graph** | Semantic intelligence | Modeled in architecture. | 🔴 Missing | P2 |
-| **AI Agents** | Governed autonomy | `OversightEngine` built. Agent runtimes missing. | 🟡 Partial | P2 |
-| **Multi-tenancy** | Enterprise SaaS | Tenancy models defined. Not enforced in an API layer. | 🟡 Partial | P1 |
-| **Edge runtime** | Offline/edge operation | Defined in architecture. | 🔴 Missing | P1 |
+---
 
-## 3. Structural & Code Audit
+## 2. B1.1 — Repository Inventory
 
-### Existing Components (The Good)
-- **Domain Logic:** `src/domain/` contains 50+ beautifully modeled domains.
-- **Platform Intelligence:** `src/platform/` contains excellent logic for Anomaly Detection, Safety Constraints, Action Ledgers, and Policy Engines.
-- **Testing:** `tests/` contains comprehensive unit tests that validate the logic.
+### Actual Structure
+```
+Movisabio-Enterprise-Smart-City-System-main
+├── apps/               # Mock/dummy Streamlit scripts
+├── backend/            # Empty / not present
+├── frontend/           # Empty / not present
+├── services/           # Empty / not present
+├── domain/             # Extensive Python logical modeling (50+ domains)
+├── platform/           # Governance, Safety, AI oversight modules
+├── simulation/         # Unit tests/logic stubs
+├── schemas/            # Schemas for mock testing
+├── scripts/            # Run scripts (run_sprint_1.py, etc.)
+├── tests/              # Extensive pytest suite (passing)
+├── docs/               # Architecture docs (A1-A4)
+├── requirements.txt    # Basic dependencies
+├── pyproject.toml      # Project configuration
+├── Dockerfile          # Basic/stub dockerfile
+└── docker-compose.yml  # Basic/stub configuration
+```
 
-### Incomplete/Missing Components (The Gaps)
-- **Application Shell:** There is no `app.py`, `main.py`, or `FastAPI` instance to serve this logic over the network.
-- **State Persistence:** Everything is stateless or relies on in-memory dictionaries. `SQLAlchemy` (and `GeoAlchemy2` for spatial) must be introduced.
-- **Physical World Bridge:** The system cannot process an actual `.mp4` video file or an RTSP stream. OpenCV/YOLO are entirely missing.
-- **Environment Management:** No `requirements.txt` (though `pyproject.toml` might exist, missing major ML/DB packages), `.env` handling, or Docker environments.
+---
 
-### Architectural Violations
-- **Data Isolation:** Mock DBs in `src/domain/` often bleed context. A proper Dependency Injection (DI) pattern is needed once FastAPI is introduced.
-- **Tight Coupling:** Without a message bus (like Kafka), domain models might start calling each other directly, breaking event-driven isolation.
+## 3. B1.2 — Dependency Audit
 
-## 4. Recommended Implementation Order (Sprint Plan)
+| Dependency | Status | Classification |
+|---|---|---|
+| Python | 3.13 | REQUIRED |
+| FastAPI | `requirements.txt` | UNUSED (Not implemented in code yet) |
+| SQLAlchemy/GeoAlchemy2| `requirements.txt` | UNUSED |
+| OpenCV/YOLO/Torch | `requirements.txt` | UNUSED (CV is mocked) |
+| Redis | `requirements.txt` | UNUSED |
+| SUMO/TraCI | Missing | MISSING (Needs system installation) |
+| React/Node | Missing | MISSING |
+| Streamlit | `app.py` script | OPTIONAL (Used for mock UI) |
 
-We will follow the exact priority structure requested. Antigravity will be prompted to implement these one by one, keeping credit usage efficient and targeted.
+---
 
-### **Sprint 1 — Foundation (P0)**
-*Objective: Build the application shell.*
-- Initialize Docker Compose (PostgreSQL, PostGIS, Redis).
-- Setup FastAPI structure (`src/apps/api`).
-- Configure SQLAlchemy and Alembic for database migrations.
-- Establish baseline logging and health check endpoints.
+## 4. B1.3 — Traffic Pipeline Audit
 
-### **Sprint 2 — Vision (P0)**
-*Objective: Open the system's eyes.*
-- Implement `yolov8` (or similar) vehicle detection pipeline in Python.
-- Add DeepSORT/ByteTrack for multi-object tracking.
-- Create virtual lane polygon configurations for camera feeds.
+| Component | Exists | Functional | Production Ready |
+|---|---|---|---|
+| Video ingestion | Mocked | No | No |
+| YOLO | Mocked | No | No |
+| Tracking | Mocked | No | No |
+| Lane detection | Mocked | No | No |
+| Lane counting | Mocked | No | No |
+| Speed estimation | Mocked | No | No |
+| Traffic state | Pydantic Schemas | Mocked | No |
+| Prediction | Schemas only | No | No |
+| SUMO | No | No | No |
+| RL | No | No | No |
+| Safety engine | Yes (`SafetyEngine`) | Unit Tested | Yes (Needs DB) |
+| Signal controller | Mocked | No | No |
+| Verification | Mocked | No | No |
 
-### **Sprint 3 — Speed (P0)**
-*Objective: Measure physics.*
-- Implement homography matrix calculations.
-- Calculate speed based on pixel-to-meter conversion across tracked trajectories.
+---
 
-### **Sprint 4 — Traffic Intelligence (P0)**
-*Objective: Understand the roads.*
-- Convert raw vehicle counts and speeds into `TrafficState` (congestion levels).
-- Persist these states to the PostGIS database.
+## 5. B1.4 — Physical Control Audit
 
-### **Sprint 5 — SUMO (P0)**
-*Objective: Simulate the physical world.*
-- Integrate Eclipse SUMO and `traci` Python library.
-- Synchronize real-world `TrafficState` to SUMO network inputs.
+Currently, the repository only produces:
+```text
+Recommended Signal:
+NS Green 35s
+```
+This is **analytics/optimization**, not physical signal control. There is no controller interface, no TraCI loop, and no physical HIL (Hardware-in-the-Loop) bridge.
 
-### **Sprint 6 — Optimization & Safety (P0)**
-*Objective: Decide and Govern.*
-- Connect a basic Optimization Baseline to the SUMO simulation.
-- Wire the output through the existing `SafetyEngine` to ensure it never violates hard constraints (e.g., minimum green times).
+---
 
-### **Sprint 7 — Dashboard (P0)**
-*Objective: Human visibility.*
-- Build a rapid Streamlit (or React) dashboard showing the live camera feed, bounding boxes, live traffic state, and signal recommendations.
+## 6. B1.5 — Database Audit
 
-## 5. Next Action
-The highest-value next step is to begin **Sprint 1 — Foundation**. I will await the explicit command to initialize the FastAPI shell, SQLAlchemy, and Docker configurations.
+- **PostgreSQL / PostGIS:** Missing.
+- **SQLAlchemy / Alembic:** Missing implementation (only in `requirements.txt`).
+- **Migrations:** Missing.
+- **Persistent Trace:** Fails requirement. All actions (like `ActionLedger`) are stored in Python dictionaries and lost on restart.
+
+---
+
+## 7. B1.6 — API Audit
+
+**Endpoints:** 0 actual endpoints. `FastAPI` is not utilized in any `main.py` or `src/` code. No OpenAPI spec is generated.
+
+---
+
+## 8. B1.7 — Computer Vision Audit
+
+- **Detection:** Missing (Mocked via `MockYOLOTracker`).
+- **Tracking:** Missing.
+- **Lane logic:** Missing mathematical polygon logic.
+- **Speed:** Missing homography / perspective transformation.
+
+---
+
+## 9. B1.8 — AI/ML Audit
+
+All models are currently **STUBBED/MOCKED**. No weights, training scripts, or ML flow registries exist.
+
+---
+
+## 10. B1.9 — SUMO Audit
+
+- **Files (`.net.xml`, `.rou.xml`, `.sumocfg`):** Missing.
+- **TraCI Integration:** Missing.
+
+---
+
+## 11. B1.10 — Safety Audit
+
+The `SafetyEngine` component *does* exist conceptually and enforces minimum green, maximum green, etc. However, because it is not connected to a physical pipeline or real database, its enforcement is purely theoretical via passing unit tests.
+
+---
+
+## 12. B1.11 — Security Audit
+
+- **Auth:** Missing (Mock JWT/OAuth).
+- **Secrets:** Mocked.
+- **Risk:** High risk if deployed as-is, as there is no real Authentication middleware implemented. 
+
+---
+
+## 13. B1.12 — Deployment Audit
+
+- **Docker:** `Dockerfile` and `docker-compose.yml` exist but appear to be stubs or basic setups.
+- **Azure:** No Azure-specific dependencies found. Deployment remains portable.
+
+---
+
+## 14. B1.13 — Testing Audit
+
+- **Unit:** Extensive and passing (`tests/`).
+- **Integration:** Missing.
+- **E2E / Simulation:** Missing.
+
+---
+
+## 15. B1.14 — Technical Debt
+
+- **Critical:** Missing actual data persistence (SQLAlchemy). Missing API layer (FastAPI).
+- **High:** CV pipeline is entirely mocked. Simulation is completely missing.
+
+---
+
+## 16. B1.15 — Final Gap Matrix
+
+| Area | Current Implementation | Target Architecture | Gap | Risk | Priority | Recommended Action |
+|---|---|---|---|---|---|---|
+| **API** | None | Versioned FastAPI | Complete | High | P0 | Implement FastAPI |
+| **DB** | Dicts | PostGIS + tenancy | Complete | High | P0 | Implement SQLAlchemy |
+| **CV** | Mocks | YOLO + DeepSORT | Complete | High | P0 | Implement PyTorch pipeline |
+| **SUMO** | None | TraCI connection | Complete | High | P0 | Build `.net.xml` and Python bridge |
+| **Safety** | Logic exists | Inline enforcement | Wiring | Low | P0 | Wire engine to SUMO outputs |
+| **Auth** | Mocks | OIDC/RBAC | Complete | High | P0 | Implement Auth middleware |
+| **Dashboard** | Streamlit Mock | Live React/Streamlit | Complete | Med | P0 | Build live real-time dashboard |
+| **CI/CD** | None | Secure pipeline | Complete | Low | P1 | Implement Github Actions |
+
+---
+
+## 17. B1.16 & B1.17 — Implementation Priority
+
+**P0 blockers:**
+1. Setup FastAPI Application Shell and Repository Structure.
+2. Setup PostgreSQL/PostGIS + SQLAlchemy persistence.
+3. Build the actual PyTorch/OpenCV YOLO pipeline.
+4. Integrate SUMO and TraCI for simulation.
+
+**P1 improvements:** Prediction, Multi-tenancy, Digital Twin, CI/CD.
+**P2 future capabilities:** AI Agents, Knowledge Graph, Quantum.
+
+**Recommended implementation order:**
+1. Database & API Foundation (Sprint 1)
+2. Vision & Speed (Sprints 2 & 3)
+3. Traffic Logic & SUMO (Sprints 4 & 5)
+4. Safety & Optimization (Sprints 6 & 7)
+
+**Files that should be modified first:**
+- `app.py` / `main.py` (Need to become real FastAPI servers).
+- `src/platform/data/database.py` (Needs to be created).
+- `docker-compose.yml` (Needs Postgres/Redis configuration).
