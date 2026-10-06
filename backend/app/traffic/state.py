@@ -47,5 +47,6 @@ class TrafficStateAggregator:
             "queue_length": 0.0,
             "density": 0.0,
             "congestion_level": congestion.value,
+            "data_quality": "VALID",
             "lane_states": lane_stats
         }

@@ -34,15 +34,20 @@ async def run_pipeline_loop():
     intersection_id = "INT-001"
     
     print("Starting continuous loop...")
+    from backend.app.traffic.video import RTSPSource
+    video_source = RTSPSource("rtsp://mock-camera")
+    video_source.connect()
+    
     while True:
         try:
             # 2. Mock CV Pipeline: Video -> YOLO -> Tracking
+            frame = video_source.get_frame()
             # Generate fake tracks for demo purposes instead of real YOLO inference
             tracks = []
             for _ in range(np.random.randint(5, 30)):
                 x = np.random.uniform(0, 20)
                 y = np.random.uniform(0, 20)
-                t = Track(str(uuid.uuid4()), "car", [x-1, y-1, x+1, y+1], datetime.now(timezone.utc))
+                t = Track(str(uuid.uuid4()), 2, "car", [x-1, y-1, x+1, y+1], datetime.now(timezone.utc), "CAM-001")
                 
                 # Mock speed by updating position
                 t.update([x-0.5, y-0.5, x+1.5, y+1.5], datetime.now(timezone.utc))

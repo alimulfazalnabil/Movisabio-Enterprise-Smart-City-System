@@ -27,12 +27,17 @@ class LaneManager:
 
     def process_tracks(self, tracks: List[Track]) -> Dict[str, dict]:
         # Reset instantaneous counts
-        lane_state = {lane.lane_id: {"instantaneous_count": 0, "flow_count": self.flow_counts[lane.lane_id]} for lane in self.lanes}
+        lane_state = {lane.lane_id: {
+            "current_vehicle_count": 0, 
+            "flow_count": self.flow_counts[lane.lane_id],
+            "entry_count": 0,
+            "exit_count": 0
+        } for lane in self.lanes}
         
         for track in tracks:
             assigned_lane_id = self.assign_lane(track)
             if assigned_lane_id:
-                lane_state[assigned_lane_id]["instantaneous_count"] += 1
+                lane_state[assigned_lane_id]["current_vehicle_count"] += 1
                 
                 # Check for line crossing if trajectory has at least 2 points
                 if len(track.trajectory) >= 2:
@@ -44,5 +49,6 @@ class LaneManager:
                             self.flow_counts[assigned_lane_id] += 1
                             self.crossed_tracks[assigned_lane_id].add(track.track_id)
                             lane_state[assigned_lane_id]["flow_count"] = self.flow_counts[assigned_lane_id]
+                            lane_state[assigned_lane_id]["exit_count"] += 1 # Mock mapping flow_count logic to exit
                             
         return lane_state

@@ -61,6 +61,7 @@ class TrafficState(Base):
     queue_length = Column(Float)
     density = Column(Float)
     congestion_level = Column(Enum(TrafficStateEnum))
+    data_quality = Column(String, default="VALID")
     lane_states = Column(JSON)
 
 class TrafficSignal(Base):
