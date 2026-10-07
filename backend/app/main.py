@@ -33,7 +33,7 @@ async def readiness_check():
     return {"status": "ready"}
 
 from backend.app.api.v1 import cameras, traffic
-from backend.app.api.v1.endpoints import mobility, environment, infrastructure, resilience, civic, economy, spatial, resources, circular, agriculture, health, human_capital, tourism, industry, buildings, digital_infrastructure, security, trust, finance, regulatory, justice, government, international, strategic
+from backend.app.api.v1.endpoints import mobility, environment, infrastructure, resilience, civic, economy, spatial, resources, circular, agriculture, health, human_capital, tourism, industry, buildings, digital_infrastructure, security, trust, finance, regulatory, justice, government, international, strategic, national_resilience
 
 app.include_router(cameras.router, prefix="/api/v1/cameras", tags=["cameras"])
 app.include_router(traffic.router, prefix="/api/v1", tags=["traffic"])
@@ -61,3 +61,4 @@ app.include_router(justice.router, prefix="/api/v1/justice", tags=["justice"])
 app.include_router(government.router, prefix="/api/v1/government", tags=["government"])
 app.include_router(international.router, prefix="/api/v1/international", tags=["international"])
 app.include_router(strategic.router, prefix="/api/v1/strategic", tags=["strategic"])
+app.include_router(national_resilience.router, prefix="/api/v1/national-resilience", tags=["national-resilience"])
