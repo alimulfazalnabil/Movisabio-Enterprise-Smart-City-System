@@ -33,7 +33,7 @@ async def readiness_check():
     return {"status": "ready"}
 
 from backend.app.api.v1 import cameras, traffic
-from backend.app.api.v1.endpoints import mobility, environment, infrastructure, resilience, civic, economy, spatial, resources, circular, agriculture, health, human_capital, tourism, industry, buildings, digital_infrastructure, security, trust, finance, regulatory, justice, government, international, strategic, national_resilience, climate_futures, population, social, science_innovation, digital_economy, agents, marketplace, digital_twins, quantum, global_federation, enterprise, sre, governance, mlops, integration, assurance
+from backend.app.api.v1.endpoints import mobility, environment, infrastructure, resilience, civic, economy, spatial, resources, circular, agriculture, health, human_capital, tourism, industry, buildings, digital_infrastructure, security, trust, finance, regulatory, justice, government, international, strategic, national_resilience, climate_futures, population, social, science_innovation, digital_economy, agents, marketplace, digital_twins, quantum, global_federation, enterprise, sre, governance, mlops, integration, assurance, platform
 
 app.include_router(cameras.router, prefix="/api/v1/cameras", tags=["cameras"])
 app.include_router(traffic.router, prefix="/api/v1", tags=["traffic"])
@@ -78,3 +78,4 @@ app.include_router(governance.router, prefix="/api/v1/governance", tags=["govern
 app.include_router(mlops.router, prefix="/api/v1/mlops", tags=["mlops"])
 app.include_router(integration.router, prefix="/api/v1/integration", tags=["integration"])
 app.include_router(assurance.router, prefix="/api/v1/assurance", tags=["assurance"])
+app.include_router(platform.router, prefix="/api/v1/platform", tags=["platform"])
