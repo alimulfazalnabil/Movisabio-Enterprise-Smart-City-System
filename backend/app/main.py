@@ -33,7 +33,7 @@ async def readiness_check():
     return {"status": "ready"}
 
 from backend.app.api.v1 import cameras, traffic
-from backend.app.api.v1.endpoints import mobility, environment, infrastructure, resilience, civic, economy, spatial, resources, circular, agriculture, health, human_capital, tourism, industry, buildings, digital_infrastructure, security, trust, finance, regulatory, justice, government, international, strategic, national_resilience, climate_futures, population, social, science_innovation, digital_economy, agents, marketplace, digital_twins
+from backend.app.api.v1.endpoints import mobility, environment, infrastructure, resilience, civic, economy, spatial, resources, circular, agriculture, health, human_capital, tourism, industry, buildings, digital_infrastructure, security, trust, finance, regulatory, justice, government, international, strategic, national_resilience, climate_futures, population, social, science_innovation, digital_economy, agents, marketplace, digital_twins, quantum
 
 app.include_router(cameras.router, prefix="/api/v1/cameras", tags=["cameras"])
 app.include_router(traffic.router, prefix="/api/v1", tags=["traffic"])
@@ -70,3 +70,4 @@ app.include_router(digital_economy.router, prefix="/api/v1/digital-economy", tag
 app.include_router(agents.router, prefix="/api/v1/agents", tags=["agents"])
 app.include_router(marketplace.router, prefix="/api/v1/marketplace", tags=["marketplace"])
 app.include_router(digital_twins.router, prefix="/api/v1/twins", tags=["digital-twins"])
+app.include_router(quantum.router, prefix="/api/v1/quantum", tags=["quantum"])
