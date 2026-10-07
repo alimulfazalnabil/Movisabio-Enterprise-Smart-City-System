@@ -33,7 +33,7 @@ async def readiness_check():
     return {"status": "ready"}
 
 from backend.app.api.v1 import cameras, traffic
-from backend.app.api.v1.endpoints import mobility, environment, infrastructure, resilience, civic, economy, spatial, resources, circular, agriculture, health, human_capital, tourism, industry, buildings, digital_infrastructure, security, trust, finance, regulatory, justice, government, international, strategic, national_resilience, climate_futures, population, social, science_innovation, digital_economy, agents, marketplace, digital_twins, quantum, global_federation, enterprise
+from backend.app.api.v1.endpoints import mobility, environment, infrastructure, resilience, civic, economy, spatial, resources, circular, agriculture, health, human_capital, tourism, industry, buildings, digital_infrastructure, security, trust, finance, regulatory, justice, government, international, strategic, national_resilience, climate_futures, population, social, science_innovation, digital_economy, agents, marketplace, digital_twins, quantum, global_federation, enterprise, sre
 
 app.include_router(cameras.router, prefix="/api/v1/cameras", tags=["cameras"])
 app.include_router(traffic.router, prefix="/api/v1", tags=["traffic"])
@@ -73,3 +73,4 @@ app.include_router(digital_twins.router, prefix="/api/v1/twins", tags=["digital-
 app.include_router(quantum.router, prefix="/api/v1/quantum", tags=["quantum"])
 app.include_router(global_federation.router, prefix="/api/v1/global", tags=["global-federation"])
 app.include_router(enterprise.router, prefix="/api/v1/enterprise", tags=["enterprise"])
+app.include_router(sre.router, prefix="/api/v1/sre", tags=["sre"])
