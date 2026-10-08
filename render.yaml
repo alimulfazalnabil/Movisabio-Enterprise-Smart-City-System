@@ -41,9 +41,7 @@ services:
     name: movisabio-redis
     region: frankfurt
     plan: free
-    ipAllowList:
-      - source: 0.0.0.0/0
-        description: Render service connectivity
+    ipAllowList: []
 
 databases:
   - name: movisabio-postgres
