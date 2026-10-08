@@ -1,0 +1,53 @@
+services:
+  - type: web
+    name: movisabio-aitcs-api
+    runtime: docker
+    region: frankfurt
+    plan: 1c-2g
+    dockerfilePath: ./docker/backend.Dockerfile
+    dockerContext: .
+    healthCheckPath: /health/ready
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: CONTROLLER_MODE
+        value: MOCK
+      - key: DATABASE_URL
+        fromDatabase:
+          name: movisabio-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: movisabio-redis
+          type: keyvalue
+          property: connectionString
+
+  - type: web
+    name: movisabio-aitcs-dashboard
+    runtime: docker
+    region: frankfurt
+    plan: free
+    dockerfilePath: ./docker/frontend.Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: AITCS_API_URL
+        fromService:
+          name: movisabio-aitcs-api
+          type: web
+          property: hostport
+
+  - type: keyvalue
+    name: movisabio-redis
+    region: frankfurt
+    plan: free
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: Render service connectivity
+
+databases:
+  - name: movisabio-postgres
+    region: frankfurt
+    plan: free
+    databaseName: movisabio
+    user: movisabio
