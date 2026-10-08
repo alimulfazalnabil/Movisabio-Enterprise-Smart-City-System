@@ -6,6 +6,7 @@ services:
     plan: 1c-2g
     dockerfilePath: ./docker/backend.Dockerfile
     dockerContext: .
+    preDeployCommand: python scripts/bootstrap_postgis.py
     healthCheckPath: /health/ready
     envVars:
       - key: ENVIRONMENT
