@@ -1,39 +1,76 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-from backend.app.config import settings
+from sqlalchemy import text
+from redis.asyncio import from_url
 
-from contextlib import asynccontextmanager
+from backend.app.config import settings
 from backend.app.database.session import engine
 from backend.app.models.traffic import Base
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
+    await engine.dispose()
+
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     description="MoviSabio Enterprise Traffic Intelligence Platform",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
+
 
 @app.get("/health")
 async def health_check():
-    return {"status": "ok", "environment": settings.ENVIRONMENT}
+    return {"status": "ok", "environment": settings.ENVIRONMENT, "controller_mode": settings.CONTROLLER_MODE}
+
 
 @app.get("/health/live")
 async def liveness_check():
     return {"status": "alive"}
 
+
 @app.get("/health/ready")
 async def readiness_check():
-    # In future, check DB and Redis connectivity here
-    return {"status": "ready"}
+    checks = {"database": "down", "redis": "down"}
+    try:
+        async with engine.connect() as conn:
+            await conn.execute(text("SELECT 1"))
+        checks["database"] = "up"
+    except Exception:
+        pass
+
+    try:
+        client = from_url(settings.REDIS_URL, decode_responses=True)
+        await client.ping()
+        await client.aclose()
+        checks["redis"] = "up"
+    except Exception:
+        pass
+
+    ready = all(value == "up" for value in checks.values())
+    return JSONResponse(
+        status_code=200 if ready else 503,
+        content={"status": "ready" if ready else "not_ready", "checks": checks},
+    )
+
 
 from backend.app.api.v1 import cameras, traffic
-from backend.app.api.v1.endpoints import mobility, environment, infrastructure, resilience, civic, economy, spatial, resources, circular, agriculture, health, human_capital, tourism, industry, buildings, digital_infrastructure, security, trust, finance, regulatory, justice, government, international, strategic, national_resilience, climate_futures, population, social, science_innovation, digital_economy, agents, marketplace, digital_twins, quantum, global_federation, enterprise, sre, governance, mlops, integration, assurance, platform
+from backend.app.api.v1.endpoints import (
+    mobility, environment, infrastructure, resilience, civic, economy, spatial,
+    resources, circular, agriculture, health, human_capital, tourism, industry,
+    buildings, digital_infrastructure, security, trust, finance, regulatory,
+    justice, government, international, strategic, national_resilience,
+    climate_futures, population, social, science_innovation, digital_economy,
+    agents, marketplace, digital_twins, quantum, global_federation, enterprise,
+    sre, governance, mlops, integration, assurance, platform,
+)
 
 app.include_router(cameras.router, prefix="/api/v1/cameras", tags=["cameras"])
 app.include_router(traffic.router, prefix="/api/v1", tags=["traffic"])
@@ -58,7 +95,6 @@ app.include_router(trust.router, prefix="/api/v1/trust", tags=["trust"])
 app.include_router(finance.router, prefix="/api/v1/finance", tags=["finance"])
 app.include_router(regulatory.router, prefix="/api/v1/regulatory", tags=["regulatory"])
 app.include_router(justice.router, prefix="/api/v1/justice", tags=["justice"])
-app.include_router(government.router, prefix="/api/v1/government", tags=["government"])
 app.include_router(international.router, prefix="/api/v1/international", tags=["international"])
 app.include_router(strategic.router, prefix="/api/v1/strategic", tags=["strategic"])
 app.include_router(national_resilience.router, prefix="/api/v1/national-resilience", tags=["national-resilience"])
